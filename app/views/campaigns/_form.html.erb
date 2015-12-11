@@ -1,0 +1,20 @@
+<%= simple_form_for @campaign do |f| %>
+  <%= f.input :title %>
+  <%= f.input :description %>
+  <%= f.input :goal, as: :string %>
+  <%= f.input :end_date %>
+  <%= f.input :address %>
+  <h2>Rewards</h2>
+  <%= f.error :rewards %>
+  <%= f.simple_fields_for :rewards do |r| %>
+    <%#= r.input :body %>
+    <%#= r.input :amount, as: :string %>
+    <%#= r.input :_destroy, as: :boolean %>
+    <%= render "reward_fields", f: r %>
+  <% end %>
+  <div class="links">
+    <%# link_to_add_association helped method comes from the Cocoon gem %>
+    <%= link_to_add_association "Add Reward", f, :rewards  %>
+  </div>
+  <%= f.submit %>
+<% end %>

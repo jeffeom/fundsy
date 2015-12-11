@@ -1,0 +1,8 @@
+<h1>Campaigns</h1>
+<% @campaigns.each do |camp| %>
+  <div class="well">
+    <%= link_to camp.title, campaign_path(camp) %>
+    (<%= camp.rewards.size %> rewards)
+    <br>
+  </div>
+<% end %>

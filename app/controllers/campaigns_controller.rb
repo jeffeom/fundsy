@@ -1,9 +1,12 @@
 class CampaignsController < ApplicationController
-  before_action :authenticate_user, only: [:new, :create, :edit, :update, :destroy]
+  # before_action :authenticate_user, only: [:new, :create, :edit, :update, :destroy]
   before_action :find_campaign, only: [:edit, :update, :destroy, :show]
+
+  DEFAULT_REWARD_COUNT = 2
 
   def new
     @campaign = Campaign.new
+    # DEFAULT_REWARD_COUNT.times { @campaign.rewards.build }
   end
 
   def create
@@ -12,6 +15,8 @@ class CampaignsController < ApplicationController
     if @campaign.save
       redirect_to campaign_path(@campaign)
     else
+      number_to_build = DEFAULT_REWARD_COUNT - @campaign.rewards.size
+      number_to_build.times { @campaign.rewards.build }
       render :new
     end
   end
@@ -36,7 +41,8 @@ class CampaignsController < ApplicationController
   end
 
   def index
-    @campaigns = Campaign.order(:created_at)
+    @campaigns = Campaign.includes(:rewards).references(:rewards).order(:created_at)
+    # @campaigns = Campaign.order(:created_at)
   end
 
   def destroy
@@ -55,6 +61,9 @@ class CampaignsController < ApplicationController
   end
 
   def campaign_params
-    campaign_params = params.require(:campaign).permit(:title, :goal,                                                        :description, :end_date)
+    campaign_params = params.require(:campaign).permit(:title, :goal,
+                                                       :description, :end_date, :address,
+                                                       rewards_attributes: [:amount, :body, :id,
+                                                       :_destroy])
   end
 end
